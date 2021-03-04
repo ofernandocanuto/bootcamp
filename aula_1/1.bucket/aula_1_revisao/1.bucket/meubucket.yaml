@@ -1,0 +1,11 @@
+Description: Template que cria bucket S3
+
+Resources:
+  BucketCanuto:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      BucketName: bucket-canuto
