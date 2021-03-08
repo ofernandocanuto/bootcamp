@@ -157,4 +157,4 @@ Resources:
 ##      RouteTableId: !Ref RedshiftRouteTable
 ##      SubnetId: !Ref RedshiftSubnet
 
-##  teste
+##  agoravai
