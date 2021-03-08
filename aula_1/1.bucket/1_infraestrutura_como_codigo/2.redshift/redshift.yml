@@ -25,12 +25,6 @@ Resources:
       IamRoles:
         - !GetAtt RedshiftRole.Arn
 
-  RedshiftSubnetGroup:
-    Type: 'AWS::Redshift::ClusterSubnetGroup'
-    Properties:
-      Description: Redshift Subnet group
-      SubnetIds:
-        - !Ref RedshiftSubnet
 
   RedshiftParameterGroup:
     Type: AWS::Redshift::ClusterParameterGroup
@@ -39,12 +33,15 @@ Resources:
       ParameterGroupFamily: redshift-1.0
       Parameters:
         - ParameterName: max_concurrency_scaling_clusters
-          ParameterValue: 0
+          ParameterValue: 0                                         # inserir valor de acordo com a demanda do cluster, aws inputa mais cpu (pagamos por isso)
 
-  RedshiftVPC:
-    Type: AWS::EC2::VPC
+
+  RedshiftSubnetGroup:
+    Type: AWS::Redshift::ClusterSubnetGroup
     Properties:
-      CidrBlock: 201.0.108.40/32
+      Description: Redshift Subnet group
+      SubnetIds:
+        - !Ref RedshiftSubnet
 
   RedshiftSubnet:
     Type: AWS::EC2::Subnet
@@ -52,6 +49,12 @@ Resources:
       AvailabilityZone: us-east-1a
       CidrBlock: 201.0.108.40/32
       VpcId: !Ref RedshiftVPC
+
+  RedshiftVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 201.0.108.40/32
+
 
   RedshiftEC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -70,32 +73,6 @@ Resources:
           ToPort: 5439
       VpcId: !Ref RedshiftVPC
 
-  RedshiftVPCInternetGateway:
-    Type: AWS::EC2::InternetGateway
-
-  RedshiftVPCAttachGateway:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      VpcId: !Ref RedshiftVPC
-      InternetGatewayId: !Ref RedshiftVPCInternetGateway
-
-  RedshiftRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref RedshiftVPC
-
-  RedshiftVPCRoute:
-    Type: AWS::EC2::Route
-    Properties:
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref RedshiftVPCInternetGateway
-      RouteTableId: !Ref RedshiftRouteTable
-
-  RedshiftSubnetRouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref RedshiftRouteTable
-      SubnetId: !Ref RedshiftSubnet
 
   RedshiftRole:
     Type: AWS::IAM::Role
@@ -111,6 +88,37 @@ Resources:
               - sts:AssumeRole
       Path: "/"
       RoleName: iam-redshift-role
+
+
+  RedshiftVPCInternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  RedshiftVPCAttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref RedshiftVPC
+      InternetGatewayId: !Ref RedshiftVPCInternetGateway
+
+
+  RedshiftRouteTable:                                       #ENTENDER A REAL NECESSIDADE
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref RedshiftVPC
+
+  RedshiftVPCRoute:                                         #ENTENDER A REAL NECESSIDADE
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref RedshiftVPCInternetGateway
+      RouteTableId: !Ref RedshiftRouteTable
+
+  RedshiftSubnetRouteTableAssociation:                       #ENTENDER A REAL NECESSIDADE
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RedshiftRouteTable
+      SubnetId: !Ref RedshiftSubnet
+
+
 
   RedshiftSpectrumPolicy:
     Type: AWS::IAM::Policy
