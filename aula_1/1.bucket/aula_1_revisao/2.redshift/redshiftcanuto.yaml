@@ -13,15 +13,16 @@ Resources:
       ClusterSubnetGroupName: !Ref ClusterSubnetGroup
       ClusterType: multi-node
       DBName: canutoproduction
-      Encrypted: truet
-      IamRoles:
-        - !GetAtt RedshiftRole.Arn                   #ENTENDER MELHOR
+      Encrypted: true
       MasterUsername: admin
       MasterUserPassword: Admin1234
       NodeType: dc2.large # https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html
       NumberOfNodes: 2
       VpcSecurityGroupIds:
         - !Ref RedshiftSecurityGroup
+      IamRoles:
+        - !GetAtt RedshiftRole.Arn                   #ENTENDER MELHOR
+
 
   ClusterParameterGroup:
     Type: AWS::Redshift::ClusterParameterGroup
@@ -32,6 +33,7 @@ Resources:
         - ParameterName: max_concurrency_scaling_clusters         # Revisar do que se trata posteriormente
           ParameterValue: 0                                       # Revisar do que se trata posteriormente
 
+
   ClusterSubnetGroup:
     Type: AWS::Redshift::ClusterSubnetGroup
     Properties:
@@ -39,17 +41,18 @@ Resources:
       SubnetIds:
         - !Ref RedshiftSubnet
 
-  RedshiftVPC:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: 10.0.0.0/16
-
   RedshiftSubnet:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: sa-east-1a
       CidrBlock: 10.0.0.0/24
       VpcId: !Ref RedshiftVPC
+
+  RedshiftVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+
 
   RedshiftSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -67,6 +70,7 @@ Resources:
           IpProtocol: tcp
           ToPort: 5439
       VpcId: !Ref RedshiftVPC
+
 
   RedshiftRole:
     Type: AWS::IAM::Role
@@ -140,15 +144,17 @@ Resources:
     Properties:
       VpcId: !Ref RedshiftVPC
 
-  RedshiftVPCRoute:
-    Type: AWS::EC2::Route
-    Properties:
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref RedshiftVPCInternetGateway
-      RouteTableId: !Ref RedshiftRouteTable
+##  RedshiftVPCRoute:
+##    Type: AWS::EC2::Route
+##    Properties:
+##      DestinationCidrBlock: 0.0.0.0/0
+##      GatewayId: !Ref RedshiftVPCInternetGateway
+##      RouteTableId: !Ref RedshiftRouteTable
 
-  RedshiftSubnetRouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref RedshiftRouteTable
-      SubnetId: !Ref RedshiftSubnet
+##  RedshiftSubnetRouteTableAssociation:
+##    Type: AWS::EC2::SubnetRouteTableAssociation
+##    Properties:
+##      RouteTableId: !Ref RedshiftRouteTable
+##      SubnetId: !Ref RedshiftSubnet
+
+##  teste
