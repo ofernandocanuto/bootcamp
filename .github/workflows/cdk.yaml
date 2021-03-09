@@ -40,3 +40,6 @@ jobs:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
           python 1.aula2/github_actions/deploy.py
+
+
+    #test
